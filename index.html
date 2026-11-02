@@ -620,7 +620,9 @@ async function cambiarPw(){const p=prompt("Nueva contraseña (mínimo 8 caracter
 if(p.length<8){alert("Debe tener mínimo 8 caracteres.");return}
 const {error}=await sb.auth.updateUser({password:p});alert(error?"No se pudo cambiar. Inténtalo de nuevo.":"Contraseña cambiada.")}
 async function salir(){await sb.auth.signOut();location.reload()}
-sb.auth.getSession().then(({data})=>arranca(data.session));
+const atajo=()=>{const h=(location.hash||"").slice(1);const m={ingreso:"ventas",venta:"ventas",ventas:"ventas",gasto:"compra",compra:"compra",compras:"compra",caja:"caja",insumos:"insumos",informe:"informe",parrilla:"parrilla"};if(m[h]){go(m[h])}};
+window.addEventListener("hashchange",atajo);
+sb.auth.getSession().then(({data})=>{arranca(data.session).then(atajo)});
 sb.auth.onAuthStateChange(ev=>{if(ev==="SIGNED_OUT"){ready=false;$("#login").hidden=false}});
 </script>
 </body>
