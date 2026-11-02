@@ -536,17 +536,19 @@ const mins=E.filter(e=>e&&e.n!==null).map(e=>e.n);
 const tan=sum(S.ventas,x=>x.q+x.r)/16;
 $("#v").innerHTML=`<div class="grid"><div class="k hi"><span>Tandas vendidas</span><div class="big">${tan.toFixed(1)}</div></div>
 <div class="k"><span>Alcanza para</span><div class="big">${mins.length?Math.min(...mins):"—"} tandas</div></div></div>
-<p class="note">1 tanda = 16 brownies. Primero se gasta lo que hay en el recipiente; cuando se acaba, se abre un paquete de la reserva. La idea es que siempre quede al menos 1 paquete cerrado.</p>
+<p class="note">Una tanda son 16 brownies. Aquí anotas lo que tienes y la app te dice para cuántas tandas alcanza. Se gasta primero lo abierto y después los paquetes sin abrir; lo ideal es que siempre quede 1 paquete sin abrir.</p>
 ${falta.length?`<div class="card" style="border-color:var(--warn)"><h2>Toca comprar</h2>${falta.map(({r,e})=>`<div class="line"><span>${esc(r.n)}</span><b style="color:var(--warn)">${e.n!==null&&e.n<1?"Falta comprar":e.n!==null&&e.n<2?"Se está acabando":"Sin paquete de reserva"}</b></div>`).join("")}</div>`:`<div class="card"><b style="color:var(--ok)">Insumos al día.</b></div>`}
 ${S.rec.map((r,i)=>{const e=E[i];
 const tot0=(r.tz||0)+(r.pn||0)*(r.pz||0),pc=e&&tot0?Math.max(0,Math.min(100,e.left/tot0*100)):0;
 const malo=e&&((e.n!==null&&e.n<2)||e.sinRes);
 const tag=!e?"Sin dato":e.n!==null&&e.n<1?"Falta":e.n!==null&&e.n<2?"Poco":e.sinRes?"Sin reserva":"Bien";
-const txt=!e?"Falta anotar cuánto hay":`En el recipiente: ${Math.round(e.tz)} ${r.u}${r.pz>0?` · Reserva: ${e.pn} × ${r.pz} ${r.u}`:""}<br>${e.n!==null?`Alcanza para ${e.n} tandas`:"Falta los gramos por tanda"}`;
+const tot=e?Math.round(e.left):0;
+const txt=!e?"Escribe cuánto tienes abierto para calcular":`Tienes ${tot.toLocaleString("es-CO")} ${r.u} en total<br><b>${e.n!==null?`Alcanza para ${e.n} ${e.n===1?"tanda":"tandas"} (${e.n*16} brownies)`:"Falta anotar cuánto gasta una tanda"}</b>`;
+const f=(k,lab,hint,val,dec)=>`<label>${lab}<input type="number" inputmode="${dec?"decimal":"numeric"}" data-i="${i}" data-k="${k}" value="${val}" placeholder="0"><small class="note">${hint}</small></label>`;
 return `<div class="card"><div class="item"><div><b>${esc(r.n)}</b><small>${txt}</small></div><span class="tag ${malo?"d":""}">${tag}</span></div>
 <div class="bar"><i style="width:${pc}%;${malo?"background:var(--warn)":""}"></i></div>
-<div class="row"><label>Por tanda (${r.u})<input type="number" inputmode="decimal" data-i="${i}" data-k="t" value="${r.t}"></label><label>En el recipiente (${r.u})<input type="number" inputmode="decimal" data-i="${i}" data-k="tz" value="${r.tz==null?"":r.tz}"></label></div>
-<div class="row"><label>Paquetes cerrados<input type="number" inputmode="numeric" data-i="${i}" data-k="pn" value="${r.pn||0}"></label><label>Lo que trae cada uno (${r.u})<input type="number" inputmode="decimal" data-i="${i}" data-k="pz" value="${r.pz||0}"></label></div></div>`}).join("")}`;
+<div class="row">${f("t","Gasta por tanda","En "+r.u+", para 16 brownies",r.t,1)}${f("tz","Tienes abierto","En "+r.u+", lo del recipiente",r.tz==null?"":r.tz,1)}</div>
+<div class="row">${f("pn","Paquetes sin abrir","Cuántos tienes guardados",r.pn||0,0)}${f("pz","Trae cada paquete","En "+r.u+", según el empaque",r.pz||0,1)}</div></div>`}).join("")}`;
 $("#v").querySelectorAll("input").forEach(el=>el.onchange=()=>{const k=el.dataset.k;S.rec[+el.dataset.i][k]=(k==="tz"&&el.value==="")?null:(+el.value||0);insumos()})}
 try{const d=JSON.parse(localStorage.getItem("hornea2-gestion")||"null");if(d&&(d.ver===3||d.ver===2)){const old=d.ver;Object.assign(S,d);nid=Math.max(nid,...S.pa.map(x=>x.id));gid=Math.max(gid,...S.ventas.map(x=>x.g||0));
 if(old<3){S.may=DEFMAY();S.pm={p:5000,k:7000};S.cs={Oreo:2198,Arequipe:2574,Nutella:3343,Kinder:4119};
