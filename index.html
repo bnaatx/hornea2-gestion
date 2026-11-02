@@ -64,7 +64,10 @@ nav svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.9;st
 nav button span{display:block;font-size:20px}
 nav button.on{color:var(--lavd);font-weight:600}
 .empty{text-align:center;color:var(--mute);padding:18px}
-.row label{min-width:0}
+.row label{min-width:0;flex:1 1 0}
+input[type=date]{-webkit-appearance:none;appearance:none;min-width:0;max-width:100%;min-height:44px;text-align:left;box-sizing:border-box}
+input[type=date]::-webkit-date-and-time-value{text-align:left;min-height:1.4em}
+input,select{box-sizing:border-box}
 .mes{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .mes h2{margin:0;text-transform:capitalize}
 .mes button{border:0;background:var(--soft);color:var(--lavd);width:40px;height:40px;border-radius:50%;font-size:22px;cursor:pointer}
